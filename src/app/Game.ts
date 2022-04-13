@@ -8,8 +8,8 @@ export class Game {
   ticTacToe!: TicTacToe;
   currentPlayer!: PlayerType;
   isFinished!: boolean;
-  finishMode?: FinishMode;
-  winnerName?: string;
+  finishMode: FinishMode | null = null;
+  winnerName: string | null = null;
   xPlayerName = "player 1";
   oPlayerName = "player 2";
   score!: Score;
@@ -28,7 +28,7 @@ export class Game {
 
     const finished = this.getFinishMode();
 
-    if (finished != null) {
+    if (finished != null || this.ticTacToe.every((r) => r.every((c) => !!c))) {
       this.isFinished = true;
       this.finishMode = finished;
       this.winnerName = this.getCurrentPlayerName(message);
@@ -53,6 +53,44 @@ export class Game {
     return JSON.stringify(obj);
   }
 
+  clear(): void {
+    this.ticTacToe = [
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+    ];
+
+    this.currentPlayer = "X";
+    this.isFinished = false;
+
+    this.xPlayerName = "player 1";
+    this.oPlayerName = "player 2";
+
+    this.score = {
+      oPlayer: 0,
+      xPlayer: 0,
+    };
+  }
+
+  private init(): void {
+    this.ticTacToe = [
+      [null, null, null],
+      [null, null, null],
+      [null, null, null],
+    ];
+
+    this.currentPlayer = this.currentPlayer ?? "X";
+    this.isFinished = false;
+
+    this.xPlayerName = this.xPlayerName ?? undefined;
+    this.oPlayerName = this.oPlayerName ?? undefined;
+
+    this.score = {
+      oPlayer: this.score?.oPlayer ?? 0,
+      xPlayer: this.score?.xPlayer ?? 0,
+    };
+  }
+
   private addSCore(): void {
     if (this.currentPlayer === "X") {
       this.score.xPlayer++;
@@ -63,7 +101,7 @@ export class Game {
   }
 
   private getCurrentPlayerName(message: Message): string {
-    if (message.player === "X") {
+    if (message.player === "1") {
       return this.xPlayerName;
     }
 
@@ -175,24 +213,5 @@ export class Game {
 
   private fillCell(row: number, cell: number): void {
     this.ticTacToe[row][cell] = this.currentPlayer;
-  }
-
-  private init(): void {
-    this.ticTacToe = [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null],
-    ];
-
-    this.currentPlayer = this.currentPlayer ?? "X";
-    this.isFinished = false;
-
-    this.xPlayerName = this.xPlayerName ?? undefined;
-    this.oPlayerName = this.oPlayerName ?? undefined;
-
-    this.score = {
-      oPlayer: this.score?.oPlayer ?? 0,
-      xPlayer: this.score?.xPlayer ?? 0,
-    };
   }
 }

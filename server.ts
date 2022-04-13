@@ -13,13 +13,19 @@ wss.on("connection", (ws: WebSocket) => {
   ws.on("message", (buffer: Buffer) => {
     const message: Message = JSON.parse(buffer.toString());
 
-    if (message.player) {
-      if (wss.clients.size === 1) {
-        game.xPlayerName = message.player;
+    if (message.action === "restart") {
+      game.clear();
+      ws.send(game.toString());
+      return;
+    }
+
+    if (message.playerName) {
+      if (message.player === "1") {
+        game.xPlayerName = message.playerName;
       }
 
-      if (wss.clients.size === 2) {
-        game.oPlayerName = message.player;
+      if (message.player === "2") {
+        game.oPlayerName = message.playerName;
       }
     } else {
       game.updateGame(message);
@@ -28,7 +34,7 @@ wss.on("connection", (ws: WebSocket) => {
     wss.clients.forEach((c) => c.send(game.toString()));
   });
 
-  ws.send(JSON.stringify(game));
+  ws.send(game.toString());
 });
 
 server.listen(process.env.PORT || 5000, () => {
