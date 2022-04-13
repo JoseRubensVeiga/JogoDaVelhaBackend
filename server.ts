@@ -31,6 +31,6 @@ wss.on("connection", (ws: WebSocket) => {
   ws.send(JSON.stringify(game));
 });
 
-server.listen(3000, () => {
+server.listen(process.env.PORT || 5000, () => {
   console.log(`Server started!`);
 });
